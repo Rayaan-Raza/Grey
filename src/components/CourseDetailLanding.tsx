@@ -163,7 +163,7 @@ export default function CourseDetailLanding() {
             </ul>
 
             <Link
-              href="/courses"
+              href="/checkout?course=endodontics-remote"
               className="inline-flex items-center justify-center gap-2 w-full bg-[#7ED9B5] hover:bg-[#5ECAA0] text-black px-5 py-3.5 rounded-[10px] font-inter-medium_18pt text-[15px] mb-5 transition-colors"
             >
               <Image

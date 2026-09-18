@@ -39,6 +39,7 @@ export default function Footer() {
               </h4>
               <ul className="flex flex-col gap-3 sm:gap-4">
                 <li><Link href="/about#mission" className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors">Our Mission</Link></li>
+                <li><Link href="/community" className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors">Community</Link></li>
                 <li><Link href="/instructors" className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors">Instructors</Link></li>
                 <li><Link href="/partners" className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors">Partners</Link></li>
                 <li><Link href="/contact" className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors">Contact Us</Link></li>
@@ -66,6 +67,38 @@ export default function Footer() {
                 <li><Link href="/courses/implants-bootcamp" className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors">Implantology Track</Link></li>
                 <li><Link href="/education#pathways" className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors">Certification Programs</Link></li>
                 <li><Link href="/instructors#join-faculty" className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors">Join as Instructor</Link></li>
+              </ul>
+            </div>
+
+            <div className="flex flex-col min-w-[140px]">
+              <h4 className="text-[15px] font-semi_bold_24pt tracking-[0.1em] text-white uppercase mb-5 sm:mb-6">
+                Legal
+              </h4>
+              <ul className="flex flex-col gap-3 sm:gap-4">
+                <li>
+                  <Link
+                    href="/privacy"
+                    className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/terms"
+                    className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors"
+                  >
+                    Terms of Service
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/cookies"
+                    className="text-gray-400 hover:text-white text-[15px] font-regular_18pt transition-colors"
+                  >
+                    Cookie Policy
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>

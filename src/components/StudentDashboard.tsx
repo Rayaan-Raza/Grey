@@ -337,7 +337,7 @@ export default function StudentDashboard() {
                     </span>
                     <span>Chapter 7 of 10</span>
                     <Link
-                      href="/courses/foundations-of-clinical-endodontics"
+                      href="/courses/endodontics-remote"
                       className="inline-flex items-center gap-1 text-[#3A738D] hover:text-[#2F5F75] font-inter-medium_18pt"
                     >
                       Details
@@ -351,7 +351,7 @@ export default function StudentDashboard() {
                     </Link>
                   </div>
                   <Link
-                    href="/courses/foundations-of-clinical-endodontics"
+                    href="/courses/endodontics-remote"
                     className="inline-flex items-center justify-center gap-2 self-stretch sm:self-auto bg-[#5ECAA0] hover:bg-[#7ED9B5] text-black px-5 py-2.5 rounded-[12px] font-inter-medium_18pt text-[14px] transition-colors flex-shrink-0 shadow-[0_4px_12px_rgba(94,202,160,0.3)]"
                   >
                     <Image

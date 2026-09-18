@@ -10,7 +10,7 @@ const myCourses = [
     title: "Endodontics Foundation",
     tag: "Remote Learning",
     progress: 70,
-    href: "/courses/foundations-of-clinical-endodontics",
+    href: "/courses/endodontics-remote",
     image: `${ASSET}/course-thumb.jpg`,
     primary: true,
   },
@@ -48,9 +48,9 @@ const activity = [
 const quickActions = [
   { label: "Join Community", href: "/student-dashboard/community", icon: `${ASSET}/Icon (28).svg` },
   { label: "Download Certificate", href: "/student-dashboard/certificates", icon: `${ASSET}/Container (9).svg`, boxed: true },
-  { label: "Book Workshop", href: "/workshops", icon: `${ASSET}/Icon (29).svg` },
+  { label: "Book Workshop", href: "/student-dashboard/workshops", icon: `${ASSET}/Icon (29).svg` },
   { label: "Ask Instructor", href: "/contact", icon: `${ASSET}/Icon (30).svg` },
-  { label: "Browse Resources", href: "/resources", icon: `${ASSET}/book-open.svg` },
+  { label: "Browse Resources", href: "/student-dashboard/resources", icon: `${ASSET}/book-open.svg` },
   { label: "View Assignments", href: "/student-dashboard/assignments", icon: `${ASSET}/Icon (22).svg` },
 ];
 

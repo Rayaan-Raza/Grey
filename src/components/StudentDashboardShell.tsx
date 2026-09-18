@@ -15,10 +15,10 @@ const navItems = [
   { label: "Assignments", icon: "Icon (11).svg", href: "/student-dashboard/assignments", match: "/student-dashboard/assignments" },
   { label: "Certificates", icon: "Icon (12).svg", href: "/student-dashboard/certificates", match: "/student-dashboard/certificates" },
   { label: "Community", icon: "Icon (13).svg", href: "/student-dashboard/community", match: "/student-dashboard/community" },
-  { label: "Workshops", icon: "Icon (14).svg", href: "/workshops", match: "/workshops" },
-  { label: "Resources", icon: "Icon (15).svg", href: "/resources", match: "/resources" },
-  { label: "Profile", icon: "Icon (16).svg", href: "/student-dashboard", match: "/student-dashboard/profile" },
-  { label: "Settings", icon: "Icon (17).svg", href: "/student-dashboard", match: "/student-dashboard/settings" },
+  { label: "Workshops", icon: "Icon (14).svg", href: "/student-dashboard/workshops", match: "/student-dashboard/workshops" },
+  { label: "Resources", icon: "Icon (15).svg", href: "/student-dashboard/resources", match: "/student-dashboard/resources" },
+  { label: "Profile", icon: "Icon (16).svg", href: "/student-dashboard/profile", match: "/student-dashboard/profile" },
+  { label: "Settings", icon: "Icon (17).svg", href: "/student-dashboard/settings", match: "/student-dashboard/settings" },
 ];
 
 function asset(name: string) {
@@ -93,16 +93,23 @@ export default function StudentDashboardShell({
 
         <div className="mt-auto px-3 pb-6 pt-3 border-t border-white/10 flex flex-col gap-1">
           <Link
-            href="/contact"
-            className="flex items-center gap-3 px-3.5 py-2.5 rounded-[12px] text-white/65 hover:bg-white/10 hover:text-white transition-colors"
+            href="/student-dashboard/help"
+            onClick={() => setSidebarOpen(false)}
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-[12px] transition-colors ${
+              pathname === "/student-dashboard/help" ||
+              pathname.startsWith("/student-dashboard/help/")
+                ? "bg-[#3A738D] text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+                : "text-white/65 hover:bg-white/10 hover:text-white"
+            }`}
           >
-            <span className="w-4 h-4 flex items-center justify-center rounded-full border border-white/40 text-[10px] font-semi_bold_24pt leading-none">
+            <span className="w-4 h-4 flex items-center justify-center rounded-full border border-current text-[10px] font-semi_bold_24pt leading-none">
               ?
             </span>
             <span className="font-regular_18pt text-[14px]">Help Center</span>
           </Link>
           <Link
-            href="/"
+            href="/login"
+            onClick={() => setSidebarOpen(false)}
             className="flex items-center gap-3 px-3.5 py-2.5 rounded-[12px] text-white/65 hover:bg-white/10 hover:text-white transition-colors"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">

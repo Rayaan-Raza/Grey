@@ -3,67 +3,67 @@ import Image from "next/image";
 const bridges = [
   {
     number: "01",
-    title: "Bridging the Student Gap: From Academic Theory to Clinical Mastery",
-    gap: 'Top dental colleges prioritize theory over repetitive hands-on clinical execution, resulting in a mean clinical skills score of just 30.56/100 across 27 colleges in Pakistan (National Study, 2023). Graduates enter the workforce without a structured bridge to clinical competence.',
-    solutionLabel: "The Grey Solution (Ilm & Accessibility)",
+    title: "The Student Gap",
+    subtitle: "From Academic Theory to Clinical Mastery",
+    gap: "Top dental colleges prioritize theory over repetitive hands-on clinical execution, resulting in a mean clinical skills score of just 30.56/100 across 27 colleges in Pakistan (National Study, 2023). Graduates enter the workforce without a structured bridge to clinical competence.",
     solution:
       'We combine digital-first learning with high-yield, and rigorous assessments in our Courses and Workshops and practice. By mastering the core clinical reasoning and "why" behind every procedure online first, students maximize their time during hands-on training and assessments—building muscle memory, clinical confidence, and measured competence rather than just collecting certificates.',
   },
   {
     number: "02",
-    title: "Bridging the Graduate Gap: Overcoming Treatment Hesitation",
-    gap: "In one of our surveys done among 40+ dentists, while 76.1% of practitioners were general dentists, 67.4% rarely performed Root Canal Treatments (RCTs) due to clinical anxiety surrounding canal negotiation (58.7%) and file separation (45.7%). Furthermore, 37% struggled with referral timing, risking patient outcomes.",
-    solutionLabel: "The Gap Solution (Agility & Critical Problem-Solving)",
+    title: "The Graduate Gap",
+    subtitle: "From Treatment Hesitation to Clinical Confidence",
+    gap: "Clinical anxiety and uncertainty around complex procedures can prevent dentists from treating with confidence.",
     solution:
-      'We don\'t teach "cookbook" recipes; we train problem-solvers. Our hybrid modules directly focus on key areas of skill learning and high-fear procedures like root canal negotiation, or complication management. Through our Skills Assessment Exam Certification, dentists gain realistic diagnostic clarity on when to treat independently and when ethical referral protects the patient.',
+      "We train problem-solvers through practical modules, complication management, and clinical decision-making.",
   },
   {
     number: "03",
-    title: "Bridging the Education Market Gap: Accessible, Localized Excellence",
-    gap: "International CPD courses ($149–$1,200+) are financially out of reach for most Pakistani dentists and tailored for Western clinical setups. Locally, there is a total void of structured online dental CPD platforms, leaving clinicians reliant on inconsistent, one-off workshops often without standardized follow-up.",
-    solutionLabel: "The Grey Solution (Accessibility & Hybrid Learning)",
+    title: "The Education Market Gap",
+    subtitle: "Accessible, Localized Excellence",
+    gap: "Many international CPD programs are costly and designed for different clinical settings, while structured local options remain limited.",
     solution:
-      "By keeping operations lean and digital-first, we provide high-caliber continuing education designed specifically for the economic and clinical realities of Pakistani practice. We combine structured online modules with local, standardized hands-on training—delivering world-class education at an accessible investment.",
+      "We combine accessible online education with standardized, locally relevant hands-on training.",
   },
   {
     number: "04",
-    title: "Bridging the Instructor Gap: Standardized Outcomes Over Personal Opinions",
-    gap: "Traditional workshops reflect instructor opinion and personal preference rather than peer-reviewed evidence or needs of the learner. Learning outcomes are rarely defined, leaving participants without feedback, structured evaluation, or practical transformation.",
-    solutionLabel: "The Gap Solution (Evidence-Based Clinical Practice & Integrity)",
+    title: "The Instructor Gap",
+    subtitle: "From Personal Opinions to Standardized Outcomes",
+    gap: "Traditional workshops can rely on personal preferences without clear learning outcomes or measurable evaluation.",
     solution:
-      "Our curriculum is strictly grounded in validated research and long-term clinical outcomes. Every course features upfront, measurable learning competencies. We set realistic expectations from Day 1, providing a transparent roadmap of what you can perform independently post-course versus what requires further mentorship.",
+      "Research-based curricula, measurable competencies, and transparent learning outcomes create meaningful clinical progress.",
   },
   {
     number: "05",
-    title: "Bridging the Evidence Gap: Translating Research into Chairside Protocols",
-    gap: 'Clinical decisions are frequently made on inherited "how it\'s always been done" methods. Practical research is locked behind paywalls or complex academic journals, leading to outdated techniques, higher complication rates, and unnecessary treatment failures.',
-    solutionLabel: "The Grey Solution (Ihsan & Comprehensive Resources)",
+    title: "The Evidence Gap",
+    subtitle: "Translating Research into Chairside Practice",
+    gap: "Complex research and outdated clinical methods can make it difficult to apply current evidence in everyday practice.",
     solution:
-      "We bridge the academic-clinical divide by translating complex research into actionable chairside tools. Our Comprehensive Textbooks and Grey Dental Clinical Handbooks feature pictorial steps, evidence corners, and QR-linked procedure videos—bringing verified, high-level science straight to your operatory tray.",
+      "We turn research into practical chairside tools, clinical handbooks, textbooks, and procedure resources.",
   },
   {
     number: "06",
-    title: "Bridging the Documentation & Soft Skills Gap: Elevating Professional Standards",
-    gap: "Dentists receive no formal education in legal case documentation, clinical photography, or sensitive communication (informed consent, managing anxious patients, presenting treatment costs), exposing them to legal risk and lost patient trust.",
-    solutionLabel: "The Grey Solution (Dignity of the Profession & Practice Efficiency)",
+    title: "The Documentation & Soft Skills Gap",
+    subtitle: "Elevating Professional Standards",
+    gap: "Limited training in documentation, communication, informed consent, and patient management can affect professional practice.",
     solution:
-      "We believe technical mastery is incomplete without respect for the person in the chair. We provide ready-to-use Patient & Clinic Workflow Templates, standardized documentation protocols, and soft-skills training to help clinicians communicate with empathy, uphold informed consent, and safeguard professional integrity.",
+      "We provide practical templates, documentation protocols, and soft-skills training for better patient care and professional integrity.",
   },
   {
     number: "07",
-    title: "Bridging the Psychological Safety Gap: Eliminating Professional Isolation",
-    gap: "Dentists work in clinical silos with no safe space to discuss complications, ask questions, or process mistakes without fear of reputational harm or judgment. This isolation stunts professional growth and leads to repeated errors.",
-    solutionLabel: "The Grey Solution (Community & Safe Mentorship)",
+    title: "The Psychological Safety Gap",
+    subtitle: "From Professional Isolation to Community",
+    gap: "Dentists often lack a safe space to discuss complications, ask questions, and learn from clinical challenges.",
     solution:
-      "Dentistry is easier when you aren't figuring it out alone. Through our Exclusive Networking & Discussion Forums, we foster judgment-free cohorts dedicated to honest case analysis, peer reflection, and transparent discussion of clinical setbacks.",
+      "We create judgment-free forums for case discussion, peer learning, reflection, and mentorship.",
   },
   {
     number: "08",
-    title: "Bridging the Job & Career Gap: Sustainable Skill Pathways",
-    gap: "Thousands of graduates enter a saturated market without guidance on building specialized clinical competence, personal branding, or sustainable career pathways.",
-    solutionLabel: "The Grey Solution (Lifelong Mentorship & Impact)",
+    title: "The Job & Career Gap",
+    subtitle: "Building Sustainable Skill Pathways",
+    gap: "Many graduates lack guidance on developing specialized skills and building sustainable career pathways.",
     solution:
-      "We aim to create opportunities for dentists to grow in every way possible. Our team of dentists working in various departments are a testament to that commitment. As we grow, so does the community, and more jobs will be created. Also those who enroll with us, their learning or growth doesn't end when a workshop finishes. We connect emerging dentists with seasoned mentors, offering continuous post-course guidance that empowers clinicians to elevate their practice, command respect in their market, and create a positive ripple effect across the entire dental community.",
+      "We provide continuous mentorship and growth opportunities that extend beyond the classroom.",
   },
 ];
 
@@ -141,9 +141,14 @@ export default function OurApproach() {
                 <span className="text-[#5ECAA0] font-semi_bold_24pt text-[28px] sm:text-[32px] leading-none tracking-tight flex-shrink-0">
                   {bridge.number}
                 </span>
-                <h3 className="text-[#3A738D] font-semi_bold_24pt text-[18px] sm:text-[20px] md:text-[22px] leading-snug tracking-tight min-w-0">
-                  {bridge.title}
-                </h3>
+                <div className="min-w-0">
+                  <h3 className="text-[#3A738D] font-semi_bold_24pt text-[18px] sm:text-[20px] md:text-[22px] leading-snug tracking-tight">
+                    {bridge.title}
+                  </h3>
+                  <p className="text-[#777779] font-regular_18pt text-[14px] sm:text-[15px] mt-1.5">
+                    {bridge.subtitle}
+                  </p>
+                </div>
               </div>
 
               <div className="flex flex-col lg:flex-row gap-5 sm:gap-6 lg:gap-8 w-full min-w-0">
@@ -160,7 +165,7 @@ export default function OurApproach() {
 
                 <div className="flex flex-col flex-1 min-w-0 pt-4 lg:pt-0 border-t lg:border-t-0 border-[#D5DEE2]">
                   <h4 className="text-[#5ECAA0] font-semi_bold_24pt text-[13px] sm:text-[14px] tracking-[0.04em] mb-2 sm:mb-2.5">
-                    {bridge.solutionLabel}
+                    Our Solution
                   </h4>
                   <p className="text-[#777779] font-regular_18pt text-[13px] sm:text-[14px] md:text-[15px] leading-relaxed">
                     {bridge.solution}

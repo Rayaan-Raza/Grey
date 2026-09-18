@@ -64,6 +64,18 @@ export default function Navbar() {
                 </motion.svg>
               </Link>
             </motion.div>
+            <Link
+              href="/login"
+              className="text-blueText hover:text-black transition-colors whitespace-nowrap"
+            >
+              Login
+            </Link>
+            <Link
+              href="/signup"
+              className="text-blueText hover:text-black transition-colors whitespace-nowrap"
+            >
+              Sign up
+            </Link>
           </div>
         </div>
 
@@ -106,6 +118,20 @@ export default function Navbar() {
                   onClick={() => setOpen(false)}
                 >
                   Enroll now
+                </Link>
+                <Link
+                  href="/login"
+                  className="font-inter-medium_18pt text-blueText text-[15px] py-3 text-center hover:text-black transition-colors"
+                  onClick={() => setOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="font-inter-medium_18pt text-blueText text-[15px] py-3 text-center hover:text-black transition-colors"
+                  onClick={() => setOpen(false)}
+                >
+                  Sign up
                 </Link>
               </div>
             </div>

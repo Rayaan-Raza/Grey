@@ -1,67 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import StudentDashboardShell from "@/components/StudentDashboardShell";
+import type { EnrollmentWithCourse } from "@/lib/supabase/types";
 
 const cardShadow = "shadow-[0_8px_30px_rgba(47,95,117,0.06)]";
 
 type Filter = "all" | "progress" | "completed";
 
-const courses = [
-  {
-    id: "endo-remote",
-    title: "Foundations of Endodontics - Remote",
-    image: "/main-page-featured/feature-1.jpg",
-    modules: 10,
-    progress: 70,
-    href: "/courses/endodontics-remote",
-    status: "progress" as const,
-  },
-  {
-    id: "endo-immersive",
-    title: "Foundations of Endodontics - Immersive",
-    image: "/main-page-featured/feature-2.jpg",
-    modules: 12,
-    progress: 45,
-    href: "/courses/endodontics-residency",
-    status: "progress" as const,
-  },
-  {
-    id: "implants",
-    title: "Dental Implants Bootcamp",
-    image: "/main-page-featured/feature-3.jpg",
-    modules: 8,
-    progress: 0,
-    href: "/courses/implants-bootcamp",
-    status: "progress" as const,
-  },
-];
-
-const schedule = [
-  {
-    course: "Foundations of Endodontics - Remote Learning",
-    task: "Module 3 Quiz — Canal Anatomy",
-    status: "Due Soon",
-    tone: "soon" as const,
-    due: "Friday, Aug 14",
-  },
-  {
-    course: "Foundations of Endodontics - Immersive Residency",
-    task: "Workbook Submission — Access Cavity",
-    status: "In Progress",
-    tone: "progress" as const,
-    due: "Wednesday, Aug 19",
-  },
-  {
-    course: "Dental Implants Bootcamp for GP",
-    task: "Pre-assessment Questionnaire",
-    status: "Upcoming",
-    tone: "upcoming" as const,
-    due: "Saturday, Aug 22",
-  },
-];
+type CourseCard = {
+  id: string;
+  title: string;
+  image: string;
+  modules: number;
+  progress: number;
+  href: string;
+};
 
 const tabs: { id: Filter; label: string }[] = [
   { id: "all", label: "All Courses" },
@@ -69,20 +25,58 @@ const tabs: { id: Filter; label: string }[] = [
   { id: "completed", label: "Completed" },
 ];
 
-function statusClass(tone: (typeof schedule)[number]["tone"]) {
-  if (tone === "soon") return "bg-[#E5F8F0] text-[#2F5F75]";
-  if (tone === "progress") return "bg-[#F8F1E5] text-[#8A6A2F]";
-  return "bg-[#F4F7F8] text-[#777779]";
+function mapEnrollment(row: EnrollmentWithCourse): CourseCard | null {
+  if (!row.course) return null;
+  return {
+    id: row.course.id,
+    title: row.course.title,
+    image: row.course.image_url || "/main-page-featured/feature-1.jpg",
+    modules: row.course.module_count,
+    progress: row.progress,
+    href: `/courses/${row.course.slug}`,
+  };
 }
 
 export default function StudentCourses() {
   const [filter, setFilter] = useState<Filter>("all");
+  const [courses, setCourses] = useState<CourseCard[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/enrollments");
+        const json = (await res.json()) as {
+          enrollments?: EnrollmentWithCourse[];
+          error?: string;
+        };
+        if (!res.ok) throw new Error(json.error || "Failed to load courses");
+        if (cancelled) return;
+        setCourses(
+          (json.enrollments ?? [])
+            .map(mapEnrollment)
+            .filter((c): c is CourseCard => Boolean(c)),
+        );
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Failed to load courses");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const visible = useMemo(() => {
     if (filter === "all") return courses;
     if (filter === "completed") return courses.filter((c) => c.progress >= 100);
     return courses.filter((c) => c.progress < 100);
-  }, [filter]);
+  }, [filter, courses]);
 
   return (
     <StudentDashboardShell>
@@ -121,46 +115,28 @@ export default function StudentCourses() {
               </button>
             ))}
           </div>
-
-          <label className="relative inline-flex items-center self-start sm:self-auto">
-            <span className="sr-only">Sort courses</span>
-            <select
-              defaultValue="recent"
-              className="appearance-none bg-white border border-[#D5DEE2] text-[#2F5F75] font-regular_18pt text-[13px] rounded-full pl-4 pr-9 py-2 outline-none cursor-pointer"
-            >
-              <option value="recent">Sort: Recent Activity</option>
-              <option value="progress">Sort: Progress</option>
-              <option value="title">Sort: Title</option>
-            </select>
-            <svg
-              className="pointer-events-none absolute right-3.5 text-[#777779]"
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M3 4.5 6 7.5 9 4.5"
-                stroke="currentColor"
-                strokeWidth="1.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </label>
         </div>
 
-        {visible.length === 0 ? (
+        {loading ? (
+          <p className="text-[#777779] font-regular_18pt text-[14px]">Loading courses…</p>
+        ) : error ? (
+          <p className="text-red-600 font-regular_18pt text-[14px]">{error}</p>
+        ) : visible.length === 0 ? (
           <div
             className={`bg-white border border-[#D5DEE2] rounded-[20px] px-6 py-16 text-center ${cardShadow}`}
           >
             <p className="text-[#2F5F75] font-semi_bold_24pt text-[16px] mb-1">
-              No courses in this view
+              No courses yet
             </p>
-            <p className="text-[#777779] font-regular_18pt text-[14px]">
-              Completed programs will show up here once you finish a course.
+            <p className="text-[#777779] font-regular_18pt text-[14px] mb-4">
+              Browse the catalog and enroll to see your courses here.
             </p>
+            <Link
+              href="/courses"
+              className="inline-flex items-center justify-center px-5 py-2.5 rounded-[12px] bg-[#3A738D] hover:bg-[#2F5F75] text-white font-inter-medium_18pt text-[14px]"
+            >
+              Browse Catalog
+            </Link>
           </div>
         ) : (
           <div className="flex flex-col md:flex-row md:flex-wrap gap-6 w-full min-w-0">
@@ -214,54 +190,6 @@ export default function StudentCourses() {
             ))}
           </div>
         )}
-
-        <section
-          className={`bg-white border border-[#D5DEE2] rounded-[20px] sm:rounded-[24px] p-5 sm:p-6 ${cardShadow}`}
-        >
-          <div className="flex items-center justify-between gap-3 mb-5">
-            <h2 className="text-[#2F5F75] font-semi_bold_24pt text-[17px] sm:text-[18px] leading-snug">
-              Upcoming Schedule & Deadlines
-            </h2>
-            <span className="inline-flex items-center rounded-full bg-[#E5F8F0] text-[#2F5F75] font-inter-medium_18pt text-[12px] px-3 py-1 flex-shrink-0">
-              3 Urgent
-            </span>
-          </div>
-
-          <div className="hidden md:flex items-center gap-4 px-1 pb-3 border-b border-[#D5DEE2] text-[#777779] font-inter-medium_18pt text-[11px] tracking-[0.12em] uppercase">
-            <span className="flex-[1.4] min-w-0">Course</span>
-            <span className="flex-1 min-w-0">Task/Assignment</span>
-            <span className="w-[120px] flex-shrink-0">Status</span>
-            <span className="w-[140px] flex-shrink-0 text-right">Due Date</span>
-          </div>
-
-          <ul className="flex flex-col">
-            {schedule.map((row, index) => (
-              <li
-                key={row.task}
-                className={`flex flex-col md:flex-row md:items-center gap-2 md:gap-4 py-4 ${
-                  index < schedule.length - 1 ? "border-b border-[#D5DEE2]" : "pb-0"
-                }`}
-              >
-                <span className="flex-[1.4] min-w-0 text-[#2F5F75] font-inter-medium_18pt text-[14px] leading-snug">
-                  {row.course}
-                </span>
-                <span className="flex-1 min-w-0 text-[#777779] font-regular_18pt text-[14px] leading-snug">
-                  {row.task}
-                </span>
-                <span className="w-full md:w-[120px] flex-shrink-0">
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-1 font-inter-medium_18pt text-[12px] ${statusClass(row.tone)}`}
-                  >
-                    {row.status}
-                  </span>
-                </span>
-                <span className="w-full md:w-[140px] flex-shrink-0 md:text-right text-[#777779] font-regular_18pt text-[13px]">
-                  {row.due}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
       </div>
     </StudentDashboardShell>
   );
