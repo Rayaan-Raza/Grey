@@ -46,6 +46,19 @@ npm run dev
 - [ ] Add real `SUPABASE_SERVICE_ROLE_KEY` for Stripe webhooks
 - [ ] Stripe webhook URL → `/api/webhooks/stripe`
 
+### Vercel deploy (required for production)
+
+In Vercel → Project → **Settings → Environment Variables**, add for Production:
+
+| Name | Value |
+|------|--------|
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://YOUR_REF.supabase.co` (no `/rest/v1`) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon public key from Supabase |
+
+Also set **Root Directory** to `Greydental` if the repo root is the parent folder.
+
+Then **Redeploy**. Missing these vars causes `MIDDLEWARE_INVOCATION_FAILED`.
+
 ---
 
 ## Quick test after SQL
