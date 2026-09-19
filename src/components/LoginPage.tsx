@@ -1,10 +1,14 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import BrandLogo from "@/components/BrandLogo";
+import {
+  friendlyAuthError,
+  isEmailNotConfirmed,
+} from "@/lib/auth-errors";
 import { createClient } from "@/lib/supabase/client";
 
 const inputClass =
@@ -25,42 +29,108 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [showResend, setShowResend] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("error") === "auth") {
+      setError("Email link expired or was invalid. Try signing in again, or request a new confirmation email.");
+    }
+  }, [searchParams]);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
+    setInfo(null);
+    setShowResend(false);
     setLoading(true);
 
-    const supabase = createClient();
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
+    try {
+      const supabase = createClient();
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
 
-    if (signInError) {
-      setError(signInError.message);
-      setLoading(false);
-      return;
-    }
-
-    const userId = data.user?.id;
-    if (userId) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", userId)
-        .maybeSingle();
-
-      if (profile?.role === "admin") {
-        router.push("/admin-dashboard");
-        router.refresh();
+      if (signInError) {
+        setError(friendlyAuthError(signInError.message));
+        setShowResend(isEmailNotConfirmed(signInError.message));
+        setLoading(false);
         return;
       }
-    }
 
-    router.push(nextPath.startsWith("/") ? nextPath : "/student-dashboard");
-    router.refresh();
+      const userId = data.user?.id;
+      if (userId) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", userId)
+          .maybeSingle();
+
+        if (profile?.role === "admin") {
+          router.push("/admin-dashboard");
+          router.refresh();
+          return;
+        }
+      }
+
+      router.push(nextPath.startsWith("/") ? nextPath : "/student-dashboard");
+      router.refresh();
+    } catch (err) {
+      setError(friendlyAuthError(err instanceof Error ? err.message : String(err)));
+      setLoading(false);
+    }
+  }
+
+  async function resendConfirmation() {
+    const trimmed = email.trim();
+    if (!trimmed) {
+      setError("Enter your email above, then click Resend confirmation.");
+      return;
+    }
+    setResending(true);
+    setError(null);
+    setInfo(null);
+    try {
+      const supabase = createClient();
+      const { error: resendError } = await supabase.auth.resend({
+        type: "signup",
+        email: trimmed,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (resendError) {
+        setError(friendlyAuthError(resendError.message));
+      } else {
+        setInfo("Confirmation email sent. Check your inbox and spam folder.");
+      }
+    } catch (err) {
+      setError(friendlyAuthError(err instanceof Error ? err.message : String(err)));
+    } finally {
+      setResending(false);
+    }
+  }
+
+  async function continueWithGoogle() {
+    setError(null);
+    setInfo(null);
+    try {
+      const supabase = createClient();
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`,
+        },
+      });
+      if (oauthError) {
+        setError(friendlyAuthError(oauthError.message));
+      }
+    } catch (err) {
+      setError(friendlyAuthError(err instanceof Error ? err.message : String(err)));
+    }
   }
 
   return (
@@ -101,6 +171,7 @@ export default function LoginPage() {
 
           <button
             type="button"
+            onClick={continueWithGoogle}
             className="inline-flex items-center justify-center gap-2.5 w-full py-3 rounded-[10px] border border-[#D5DEE2] bg-white hover:bg-[#F4F7F8] transition-colors"
           >
             <Image
@@ -181,6 +252,19 @@ export default function LoginPage() {
 
             {error ? (
               <p className="text-red-600 font-regular_18pt text-[13px]">{error}</p>
+            ) : null}
+            {info ? (
+              <p className="text-[#2F5F75] font-regular_18pt text-[13px]">{info}</p>
+            ) : null}
+            {showResend ? (
+              <button
+                type="button"
+                onClick={resendConfirmation}
+                disabled={resending}
+                className="text-left text-[#3A738D] font-inter-medium_18pt text-[13px] hover:underline disabled:opacity-60"
+              >
+                {resending ? "Sending…" : "Resend confirmation email"}
+              </button>
             ) : null}
 
             <button

@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import BrandLogo from "@/components/BrandLogo";
+import { friendlyAuthError } from "@/lib/auth-errors";
 import { createClient } from "@/lib/supabase/client";
 
 const inputClass =
@@ -23,22 +24,27 @@ export default function ForgotPasswordPage() {
     setMessage(null);
     setLoading(true);
 
-    const supabase = createClient();
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-      email.trim(),
-      {
-        redirectTo: `${window.location.origin}/auth/callback?next=/login`,
-      },
-    );
+    try {
+      const supabase = createClient();
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+        email.trim(),
+        {
+          redirectTo: `${window.location.origin}/auth/callback?next=/login`,
+        },
+      );
 
-    if (resetError) {
-      setError(resetError.message);
+      if (resetError) {
+        setError(friendlyAuthError(resetError.message));
+        setLoading(false);
+        return;
+      }
+
+      setMessage("If that email exists, we sent a reset link.");
       setLoading(false);
-      return;
+    } catch (err) {
+      setError(friendlyAuthError(err instanceof Error ? err.message : String(err)));
+      setLoading(false);
     }
-
-    setMessage("If that email exists, we sent a reset link.");
-    setLoading(false);
   }
 
   return (

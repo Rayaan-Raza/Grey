@@ -2,11 +2,31 @@
 
 Things **you** need to do in Supabase / env. Agents update this as backend work lands.
 
-Last updated: 2026-09-16 (assessments MCQ added)
+Last updated: 2026-09-19 (auth signup/login fixes)
 
 ---
 
 ## Do now (blocking)
+
+### 0. Fix Auth so signup / login works (do this first)
+
+Registration is currently failing with **email rate limit** because Supabase “Confirm email” is ON and every signup tries to send mail.
+
+In [Supabase Dashboard](https://supabase.com/dashboard) → your project:
+
+1. **Authentication → Providers → Email**
+   - Turn **OFF** “Confirm email” while developing / presenting
+2. **Authentication → URL Configuration**
+   - **Site URL:** `https://grey-coral.vercel.app`
+   - **Redirect URLs** (add all):
+     - `https://grey-coral.vercel.app/**`
+     - `https://grey-coral.vercel.app/auth/callback`
+     - `http://localhost:3000/**`
+     - `http://localhost:3000/auth/callback`
+3. (Optional) **Authentication → Providers → Google** — enable only if you want “Continue with Google”
+4. If someone already signed up but can’t log in: Authentication → Users → open user → **Confirm** manually
+
+After step 1, new signups get a session immediately and land on `/student-dashboard`.
 
 ### 1. Run these SQL files in Supabase (SQL Editor)
 
@@ -41,9 +61,9 @@ npm run dev
 
 ## Optional later
 
-- [ ] Disable email confirmation while testing (Auth → Providers → Email)
+- [ ] Re-enable “Confirm email” for production when ready
 - [ ] Replace Stripe dummy keys in `.env.local` when going live
-- [ ] Add real `SUPABASE_SERVICE_ROLE_KEY` for Stripe webhooks
+- [ ] Add real `SUPABASE_SERVICE_ROLE_KEY` for Stripe webhooks + E2E user provisioning
 - [ ] Stripe webhook URL → `/api/webhooks/stripe`
 
 ### Vercel deploy (required for production)

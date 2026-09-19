@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import BrandLogo from "@/components/BrandLogo";
+import { friendlyAuthError } from "@/lib/auth-errors";
 import { createClient } from "@/lib/supabase/client";
 
 const inputClass =
@@ -63,36 +64,73 @@ export default function SignupPage() {
     }
 
     setLoading(true);
-    const supabase = createClient();
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-        data: {
-          full_name: fullName.trim(),
-          role,
-          institution: isInstructor ? institution.trim() : "",
-          specialty: isInstructor ? specialty.trim() : "",
-          license_number: isInstructor ? license.trim() : "",
+    try {
+      const supabase = createClient();
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          data: {
+            full_name: fullName.trim(),
+            role,
+            institution: isInstructor ? institution.trim() : "",
+            specialty: isInstructor ? specialty.trim() : "",
+            license_number: isInstructor ? license.trim() : "",
+          },
         },
-      },
-    });
+      });
 
-    if (signUpError) {
-      setError(signUpError.message);
+      if (signUpError) {
+        setError(friendlyAuthError(signUpError.message));
+        setLoading(false);
+        return;
+      }
+
+      // Supabase can return a fake user with empty identities when the email
+      // already exists (to avoid account enumeration).
+      const alreadyRegistered =
+        Array.isArray(data.user?.identities) && data.user.identities.length === 0;
+
+      if (alreadyRegistered) {
+        setError("An account with this email already exists. Try logging in instead.");
+        setLoading(false);
+        return;
+      }
+
+      if (data.session) {
+        router.push("/student-dashboard");
+        router.refresh();
+        return;
+      }
+
+      setMessage(
+        "Account created. Check your email to confirm, then log in. If no email arrives, disable “Confirm email” in Supabase Auth while testing, or wait a few minutes and try again.",
+      );
       setLoading(false);
-      return;
+    } catch (err) {
+      setError(friendlyAuthError(err instanceof Error ? err.message : String(err)));
+      setLoading(false);
     }
+  }
 
-    if (data.session) {
-      router.push("/student-dashboard");
-      router.refresh();
-      return;
+  async function continueWithGoogle() {
+    setError(null);
+    setMessage(null);
+    try {
+      const supabase = createClient();
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (oauthError) {
+        setError(friendlyAuthError(oauthError.message));
+      }
+    } catch (err) {
+      setError(friendlyAuthError(err instanceof Error ? err.message : String(err)));
     }
-
-    setMessage("Check your email to confirm your account, then log in.");
-    setLoading(false);
   }
 
   return (
@@ -134,6 +172,7 @@ export default function SignupPage() {
 
           <button
             type="button"
+            onClick={continueWithGoogle}
             className="inline-flex items-center justify-center gap-2.5 w-full py-3 rounded-[10px] border border-[#D5DEE2] bg-white hover:bg-[#F4F7F8] transition-colors mb-5 sm:mb-6"
           >
             <Image
