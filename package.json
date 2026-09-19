@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test:backend": "node scripts/verify-backend.mjs",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:provision": "node scripts/provision-e2e-user.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

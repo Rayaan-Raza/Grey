@@ -23,16 +23,24 @@ From `Greydental/`:
 npm run test:e2e
 ```
 
-Auth flows need credentials in `.env.local` (or the shell):
+### Auth credentials (for dashboard tests)
+
+Priority order:
+
+1. `E2E_STUDENT_*` / `E2E_ADMIN_*` already in `.env.local`
+2. Auto-provision via `SUPABASE_SERVICE_ROLE_KEY` in Playwright `global-setup` / `npm run test:e2e:provision`
+3. Browser signup at `/signup` (needs Confirm email OFF; rate-limited otherwise)
 
 ```env
 E2E_STUDENT_EMAIL=...
 E2E_STUDENT_PASSWORD=...
 E2E_ADMIN_EMAIL=...
 E2E_ADMIN_PASSWORD=...
+SUPABASE_SERVICE_ROLE_KEY=...   # optional; enables auto-provision
 ```
 
-Without credentials, public + login-page smoke tests still run; signed-in dashboard tests are skipped.
+Without student credentials and with signup blocked, student dashboard tests **skip** (public suite still runs).
+Admin tests skip without `E2E_ADMIN_*` (or service-role auto-provision).
 
 ## What to verify
 
@@ -41,28 +49,27 @@ Without credentials, public + login-page smoke tests still run; signed-in dashbo
 2. `/courses`, `/about`, `/contact` — 200 / no middleware 500
 3. `/login` — email + password fields + Log In button
 4. `/signup` — Create Account form
+5. Logged-out `/student-dashboard` and `/admin-dashboard` → `/login`
+6. Bad password stays on `/login` with an error
 
-### Student (requires E2E_STUDENT_*)
-1. Login → lands on `/student-dashboard` (or role home)
+### Student
+1. Login/signup → `/student-dashboard`
 2. Visit: courses, progress, assignments, workshops, resources, certificates, community, profile, settings, help
-3. Assignments → “Take exam” link works if assessment seeded
-4. Logout / login link in shell works
+3. Student hitting `/admin-dashboard` must be redirected away
 
-### Admin (requires E2E_ADMIN_* with profiles.role = admin)
+### Admin (requires admin role)
 1. Login → can open `/admin-dashboard`
 2. Visit: courses, learners, assessments, certificates, resources, workshops, analytics
-3. Non-admin must be redirected away from admin
 
 ## Failure signals
 
 - `MIDDLEWARE_INVOCATION_FAILED` → missing Vercel `NEXT_PUBLIC_SUPABASE_*` env
+- `email rate limit exceeded` → Confirm email ON + too many signups; use service role provision or existing accounts
 - Login stays on `/login` with error → wrong password or email confirm required
 - Dashboard redirects to `/login` → session/cookies or middleware issue
-- Empty courses/workshops → SQL seeds not run (`USER_TODO.md`)
 
 ## Agent behavior
 
-1. Run `npm run test:e2e` and report pass/fail table.
-2. If auth env missing, say which tests were skipped and ask for student/admin emails.
-3. Do not print passwords in chat.
-4. After failures, check Vercel env + Supabase Auth users before changing UI code.
+1. Run `npm run test:e2e` and report pass/fail/skip table.
+2. Do not print passwords in chat.
+3. After failures, check Vercel env + Supabase Auth users before changing UI code.

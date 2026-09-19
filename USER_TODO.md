@@ -67,7 +67,11 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Add to `.env.local` for signed-in tests:
+Public + auth-gate tests run with no secrets.
+
+For **signed-in student/admin dashboards**, pick one:
+
+1. Put real accounts in `.env.local`:
 
 ```env
 E2E_BASE_URL=https://grey-coral.vercel.app
@@ -76,6 +80,16 @@ E2E_STUDENT_PASSWORD=your-password
 E2E_ADMIN_EMAIL=your-admin@email.com
 E2E_ADMIN_PASSWORD=your-password
 ```
+
+2. Or set `SUPABASE_SERVICE_ROLE_KEY` and run:
+
+```bash
+npm run test:e2e:provision
+```
+
+Then paste the printed `E2E_*` lines into `.env.local`. Global setup will also auto-create users when the service role key is present.
+
+While developing, disable **Confirm email** in Supabase → Authentication → Providers → Email (avoids signup rate limits).
 
 Cursor skill: `.cursor/skills/grey-dental-browser-e2e/`
 
