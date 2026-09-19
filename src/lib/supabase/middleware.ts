@@ -1,15 +1,35 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+function isProtectedPath(path: string) {
+  return (
+    path.startsWith("/student-dashboard") ||
+    path.startsWith("/admin-dashboard") ||
+    path.startsWith("/checkout")
+  );
+}
+
+function loginRedirect(request: NextRequest) {
+  const redirectUrl = request.nextUrl.clone();
+  redirectUrl.pathname = "/login";
+  redirectUrl.searchParams.set(
+    "next",
+    request.nextUrl.pathname + (request.nextUrl.search || ""),
+  );
+  return NextResponse.redirect(redirectUrl);
+}
+
 export async function updateSession(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const path = request.nextUrl.pathname;
 
-  // Missing env on Vercel must not crash the whole site
+  // If Supabase isn't configured, never expose protected dashboards
   if (!url || !anonKey) {
     console.error(
       "Supabase env missing: set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in Vercel.",
     );
+    if (isProtectedPath(path)) return loginRedirect(request);
     return NextResponse.next({ request });
   }
 
@@ -41,7 +61,6 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const path = request.nextUrl.pathname;
     const isAuthPage =
       path.startsWith("/login") ||
       path.startsWith("/signup") ||
@@ -51,13 +70,7 @@ export async function updateSession(request: NextRequest) {
     const isCheckout = path.startsWith("/checkout");
 
     if (!user && (isStudentArea || isAdminArea || isCheckout)) {
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = "/login";
-      redirectUrl.searchParams.set(
-        "next",
-        path + (request.nextUrl.search || ""),
-      );
-      return NextResponse.redirect(redirectUrl);
+      return loginRedirect(request);
     }
 
     if (user && isAuthPage) {
@@ -83,6 +96,7 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   } catch (error) {
     console.error("Middleware auth error:", error);
+    if (isProtectedPath(path)) return loginRedirect(request);
     return NextResponse.next({ request });
   }
 }

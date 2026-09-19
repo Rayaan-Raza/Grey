@@ -59,6 +59,26 @@ Also set **Root Directory** to `Greydental` if the repo root is the parent folde
 
 Then **Redeploy**. Missing these vars causes `MIDDLEWARE_INVOCATION_FAILED`.
 
+### Browser E2E agent
+
+```bash
+cd Greydental
+npx playwright install chromium
+npm run test:e2e
+```
+
+Add to `.env.local` for signed-in tests:
+
+```env
+E2E_BASE_URL=https://grey-coral.vercel.app
+E2E_STUDENT_EMAIL=your-student@email.com
+E2E_STUDENT_PASSWORD=your-password
+E2E_ADMIN_EMAIL=your-admin@email.com
+E2E_ADMIN_PASSWORD=your-password
+```
+
+Cursor skill: `.cursor/skills/grey-dental-browser-e2e/`
+
 ---
 
 ## Quick test after SQL
